@@ -22,6 +22,13 @@ in
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
+  # Define bridge network interface
+  networking.bridges.br0.interfaces = ["enp8s0"];
+  networking.interfaces.br0 = {
+    useDHCP = true;
+  };
+
+
   # Set your time zone.
   # time.timeZone = "Europe/Amsterdam";
   time.timeZone = "Asia/Kolkata";
@@ -71,7 +78,7 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.sids = {
     isNormalUser = true;
-    extraGroups = [ "docker" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "docker" "libvirtd" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       #fish
     ];
@@ -109,8 +116,10 @@ in
     wget
     dig
     inetutils
+    virt-manager
     silver-searcher
     mdadm
+    zfs
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -122,7 +131,11 @@ in
   # };
 
   # List services that you want to enable:
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+    extraUpFlags = "--advertise-routes 10.42.0.0/16";
+  };
   services.btrfs.autoScrub.enable = true;
   services.btrfs.autoScrub.interval = "weekly";
 
@@ -150,10 +163,15 @@ in
         };
       };
     };
+    libvirtd = {
+      enable = true;
+      # Used for UEFI boot of Home Assistant OS guest image
+      qemu.ovmf.enable = true;
+    };
   };
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
