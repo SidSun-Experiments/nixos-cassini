@@ -104,6 +104,27 @@ in
       ];
   };
 
+  # Allow users to run mount and unmount
+  # Backup scripts will need to mount / unmount ZFS snapshots
+  # which reminds me, ZFS snapshot, destroy, mount and create permissions are given to sids via:
+  # zfs allow sids snapshot,destroy,mount,create <zpool>
+  security.sudo = {
+    enable = true;
+    extraRules = [{
+      commands = [
+        {
+          command = "/run/wrappers/bin/mount";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/run/wrappers/bin/umount";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+      groups = [ "users" ];
+    }];
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
