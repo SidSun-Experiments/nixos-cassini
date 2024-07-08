@@ -174,6 +174,13 @@ in
   # ZFS services
   services.zfs.autoScrub.enable = true;
   services.zfs.trim.enable = true;
+  # Cron
+  services.cron = {
+    enable = true;
+    systemCronJobs = [
+      "00 6,18 * * *      root    . /etc/profile; /root/backup-scripts/restic-backup.sh"
+    ];
+  };
 
   # Enable the OpenSSH daemon.
   services.openssh = {
