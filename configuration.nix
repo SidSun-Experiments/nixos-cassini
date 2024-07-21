@@ -151,6 +151,7 @@ in
     silver-searcher
     mdadm
     zfs
+    powertop
     # shc # shell script compiler, bookmarking if needed later
   ];
 
@@ -192,6 +193,30 @@ in
       PermitRootLogin = "prohibit-password"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
     };
   };
+  # Enable Prometheus Exporters for monitoring
+  services.prometheus.exporters = {
+    node = {
+      enable = true;
+    };
+    zfs = {
+      enable = true;
+    };
+    # process.enable = true;
+  };
+  services.cadvisor = {
+    enable = true;
+    port = 9180;
+    listenAddress = "0.0.0.0";
+  };
+
+  # Optimize and GC nix generations automatically
+  nix.optimise.automatic = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+
 
   # Docker
   virtualisation = {
