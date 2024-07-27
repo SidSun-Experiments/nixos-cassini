@@ -244,6 +244,10 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
+  systemd.services."docker" = {
+    preStart = "${pkgs.stdenv.shell} -c \'(while ! ${pkgs.tailscale.out}/bin/tailscale status > /dev/null 2>&1; do echo \"Waiting for tailscale to start...\"; sleep 2; done); sleep 2\'";
+  };
+
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
