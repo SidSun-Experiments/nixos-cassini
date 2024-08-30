@@ -103,6 +103,21 @@ in
         ]))
       ];
   };
+  # Rey and Nick users
+  users.users.nick = {
+    isNormalUser = true;
+    extraGroups = [ "docker" ]; # Enable ‘sudo’ for the user.
+    packages = with pkgs; [
+      #fish
+    ];
+  };
+  users.users.rewant = {
+    isNormalUser = true;
+    extraGroups = [ "docker" ]; # Enable ‘sudo’ for the user.
+    packages = with pkgs; [
+      #fish
+    ];
+  };
 
   # Allow users to run mount and unmount
   # Backup scripts will need to mount / unmount ZFS snapshots
@@ -189,7 +204,7 @@ in
     ports = [ 22 ];
     settings = {
       PasswordAuthentication = false;
-      AllowUsers = [ "root" "sids" ]; # Allows all users by default. Can be [ "user1" "user2" ]
+      AllowUsers = [ "root" "sids" "nick" "rewant" ]; # Allows all users by default. Can be [ "user1" "user2" ]
       PermitRootLogin = "prohibit-password"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
     };
   };
